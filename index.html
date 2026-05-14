@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1PAGE – Game Development</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:   #3a5bab;
+      --blue-d: #2d4690;
+      --blue-l: #4f72c4;
+      --dark:   #1a1f2e;
+      --accent: #ffffff;
+      --text:   #444;
+      --light:  #f5f7fc;
+      --border: #dde3f0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: #fff;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%;
+      height: 64px;
+      background: rgba(42, 62, 120, 0.96);
+      backdrop-filter: blur(8px);
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.35rem; font-weight: 800;
+      color: #fff; letter-spacing: -.5px;
+    }
+    .logo span { color: #8ab4ff; }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: 'Syne', sans-serif;
+      font-size: .78rem; font-weight: 600;
+      color: rgba(255,255,255,.75);
+      text-decoration: none; letter-spacing: .08em; text-transform: uppercase;
+      transition: color .2s;
+    }
+    .nav-links a.active,
+    .nav-links a:hover { color: #fff; border-bottom: 2px solid #8ab4ff; padding-bottom: 2px; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #2d4690 0%, #3a5bab 50%, #1a2a60 100%);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 80px 5% 60px;
+      position: relative; overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 60%, rgba(255,255,255,.05) 0%, transparent 70%);
+    }
+
+    /* floating decorative circles */
+    .hero::after {
+      content: '';
+      position: absolute; width: 480px; height: 480px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.08);
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      animation: pulse-ring 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0%, 100% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+      50%       { transform: translate(-50%,-50%) scale(1.06); opacity: .5; }
+    }
+
+    .hero-inner { position: relative; z-index: 1; max-width: 700px; }
+
+    .hero-badge {
+      display: inline-block;
+      font-family: 'Syne', sans-serif; font-size: .72rem; font-weight: 600;
+      letter-spacing: .15em; text-transform: uppercase;
+      color: #8ab4ff; border: 1px solid rgba(138,180,255,.4);
+      border-radius: 999px; padding: 4px 16px; margin-bottom: 1.5rem;
+      animation: fadeUp .6s ease both;
+    }
+
+    h1.hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800; color: #fff;
+      line-height: 1.1; margin-bottom: 1.2rem;
+      animation: fadeUp .7s .1s ease both;
+    }
+
+    .hero-sub {
+      font-size: 1rem; color: rgba(255,255,255,.75);
+      line-height: 1.7; max-width: 480px; margin: 0 auto 2.2rem;
+      animation: fadeUp .7s .2s ease both;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      font-family: 'Syne', sans-serif; font-size: .85rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      background: #fff; color: var(--blue);
+      border: none; border-radius: 4px;
+      padding: 14px 36px; cursor: pointer;
+      text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+      animation: fadeUp .7s .3s ease both;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.25); }
+
+    .hero-dots { margin-top: 2.5rem; display: flex; gap: 8px; justify-content: center; animation: fadeUp .7s .4s ease both; }
+    .hero-dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.35); }
+    .hero-dots span.active { background: #fff; }
+
+    /* chevron arrows */
+    .hero-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,.15); border: none; color: #fff;
+      width: 42px; height: 42px; border-radius: 50%; font-size: 1.1rem;
+      cursor: pointer; transition: background .2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-arrow:hover { background: rgba(255,255,255,.3); }
+    .hero-arrow.left  { left: 3%; }
+    .hero-arrow.right { right: 3%; }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(24px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* ── SECTION BASE ── */
+    section { padding: 80px 5%; }
+    .section-label {
+      font-family: 'Syne', sans-serif; font-size: .7rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--blue);
+      margin-bottom: .5rem;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800; color: var(--dark); margin-bottom: .6rem;
+    }
+    .section-title em { color: var(--blue); font-style: normal; }
+    .section-divider { width: 48px; height: 3px; background: var(--blue); margin: .8rem auto 1.4rem; border-radius: 2px; }
+    .section-sub { color: #777; font-size: .95rem; line-height: 1.7; max-width: 560px; margin: 0 auto; }
+    .centered { text-align: center; }
+
+    /* ── WELCOME ── */
+    .welcome { background: #fff; }
+    .welcome p { max-width: 680px; margin: 0 auto 2rem; line-height: 1.8; font-size: .95rem; color: #555; }
+    .btn-outline {
+      display: inline-block;
+      font-family: 'Syne', sans-serif; font-size: .8rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      border: 2px solid var(--blue); color: var(--blue);
+      border-radius: 4px; padding: 10px 28px; text-decoration: none;
+      transition: all .2s;
+    }
+    .btn-outline:hover { background: var(--blue); color: #fff; }
+
+    /* ── STORY / MISSION / VISION ── */
+    .smv { padding: 0; }
+    .smv-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+    }
+    .smv-card {
+      padding: 56px 40px;
+      text-align: center;
+    }
+    .smv-card:nth-child(1) { background: var(--blue); color: rgba(255,255,255,.9); }
+    .smv-card:nth-child(2) { background: var(--dark); color: rgba(255,255,255,.9); }
+    .smv-card:nth-child(3) { background: var(--blue-l); color: rgba(255,255,255,.9); }
+
+    .smv-icon { font-size: 2.4rem; margin-bottom: 1rem; opacity: .9; }
+    .smv-card h3 {
+      font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700;
+      color: #fff; margin-bottom: .8rem;
+    }
+    .smv-card p { font-size: .88rem; line-height: 1.7; opacity: .82; }
+
+    /* ── SERVICES ── */
+    .services { background: var(--light); }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1rem; margin-top: 2.5rem;
+    }
+    .service-item {
+      display: flex; align-items: center; gap: .85rem;
+      padding: 18px 20px;
+      background: #fff; border-radius: 6px;
+      border: 1px solid var(--border);
+      transition: box-shadow .2s, transform .2s;
+      cursor: default;
+    }
+    .service-item:hover { box-shadow: 0 8px 24px rgba(58,91,171,.12); transform: translateY(-2px); }
+    .service-icon {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 2px solid var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: var(--blue); flex-shrink: 0;
+    }
+    .service-item span {
+      font-family: 'Syne', sans-serif; font-size: .78rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase; color: var(--dark);
+    }
+
+    /* ── STATS ── */
+    .stats {
+      background: linear-gradient(135deg, var(--blue-d) 0%, var(--blue) 100%);
+      padding: 70px 5%;
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 2rem; text-align: center;
+    }
+    .stat-icon { font-size: 1.8rem; margin-bottom: .8rem; opacity: .9; color: rgba(255,255,255,.7); }
+    .stat-num {
+      font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 800;
+      color: #fff; line-height: 1;
+    }
+    .stat-num sup { font-size: 1.2rem; vertical-align: super; }
+    .stat-label { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.65); margin-top: .5rem; }
+
+    /* ── PORTFOLIO ── */
+    .portfolio { background: #fff; }
+    .portfolio-tabs { display: flex; gap: 1.5rem; justify-content: center; margin: 1.5rem 0 2rem; }
+    .tab-btn {
+      font-family: 'Syne', sans-serif; font-size: .75rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      background: none; border: none; cursor: pointer;
+      color: #999; padding: 4px 0; border-bottom: 2px solid transparent;
+      transition: all .2s;
+    }
+    .tab-btn.active, .tab-btn:hover { color: var(--blue); border-bottom-color: var(--blue); }
+
+    .portfolio-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .portfolio-item {
+      border-radius: 6px; overflow: hidden;
+      aspect-ratio: 4/3; position: relative;
+    }
+    .portfolio-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      transition: transform .3s;
+    }
+    .portfolio-item:hover .portfolio-placeholder { transform: scale(1.05); }
+    .portfolio-item:nth-child(1) .portfolio-placeholder { background: linear-gradient(135deg, #1a1a2e, #6b35cf); }
+    .portfolio-item:nth-child(2) .portfolio-placeholder { background: linear-gradient(135deg, #c8a96e, #e8d5a3); }
+    .portfolio-item:nth-child(3) .portfolio-placeholder { background: linear-gradient(135deg, #2c3e50, #bdc3c7); }
+    .portfolio-item:nth-child(4) .portfolio-placeholder { background: linear-gradient(135deg, #0066cc, #33aaff); }
+    .portfolio-item:nth-child(5) .portfolio-placeholder { background: linear-gradient(135deg, #1a1a1a, #555); }
+    .portfolio-item:nth-child(6) .portfolio-placeholder { background: linear-gradient(135deg, #c0392b, #e74c3c); }
+
+    /* ── TESTIMONIAL ── */
+    .testimonial {
+      background: var(--light); padding: 80px 5%;
+    }
+    .testi-card {
+      max-width: 680px; margin: 0 auto;
+      background: #fff; border-radius: 10px;
+      padding: 40px 48px;
+      box-shadow: 0 4px 32px rgba(58,91,171,.08);
+      text-align: center;
+    }
+    .testi-avatar {
+      width: 70px; height: 70px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--blue-l));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin: 0 auto 1rem;
+      color: #fff;
+    }
+    .testi-name {
+      font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--dark);
+    }
+    .testi-role { font-size: .82rem; color: #999; margin-bottom: 1.2rem; }
+    .testi-text { font-size: .95rem; line-height: 1.8; color: #555; font-style: italic; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark); color: rgba(255,255,255,.6);
+      padding: 28px 5%; text-align: center;
+      font-size: .82rem;
+    }
+    footer strong { color: rgba(255,255,255,.9); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .smv-grid { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: repeat(2,1fr); }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .portfolio-grid { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .services-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .testi-card { padding: 28px 24px; }
+    }
+
+    /* scroll-reveal */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo"><span>1</span>PAGE</div>
+  <ul class="nav-links">
+    <li><a href="#hero" class="active">Home</a></li>
+    <li><a href="#about">About Us</a></li>
+    <li><a href="#services">Our Services</a></li>
+    <li><a href="#portfolio">Our Portfolio</a></li>
+    <li><a href="#contact">Contact Us</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <button class="hero-arrow left" aria-label="prev">&#8249;</button>
+  <div class="hero-inner">
+    <div class="hero-badge">Creative Studio</div>
+    <h1 class="hero-title">Game Development</h1>
+    <p class="hero-sub">Lorem Ipsum is simply dummy text of the printing and typesetting industry. We craft digital experiences that matter.</p>
+    <a href="#about" class="btn-primary">Get Started</a>
+    <div class="hero-dots">
+      <span class="active"></span><span></span><span></span>
+    </div>
+  </div>
+  <button class="hero-arrow right" aria-label="next">&#8250;</button>
+</section>
+
+<!-- WELCOME -->
+<section class="welcome centered" id="about">
+  <div class="reveal">
+    <p class="section-label">Who We Are</p>
+    <h2 class="section-title">Welcome To Our <em>Website</em></h2>
+    <div class="section-divider"></div>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec viverra at massa sit amet ultrices. Consequat mauris non interdum cursus, eros massa faucibus diam, in sodales quam ligula in est. Nullam ultrices turpis ut justo mollis tempus. Aliquam et tortor at quam laoreet condimentum ac nec leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam mollis lacus tellus, eget fringilla enim feugiat in. Maecenas nec euismod lectus, nec congue eros. Nulla amet bibendum ut, fringilla sit amet est.</p>
+    <a href="#services" class="btn-outline" style="margin-top:1.6rem; display:inline-block;">Read More</a>
+  </div>
+</section>
+
+<!-- STORY / MISSION / VISION -->
+<div class="smv">
+  <div class="smv-grid">
+    <div class="smv-card reveal">
+      <div class="smv-icon">↺</div>
+      <h3>Our Story</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec viverra at massa sit amet ultrices, eros massa faucibus diam, in sodales quam ligula in est.</p>
+    </div>
+    <div class="smv-card reveal">
+      <div class="smv-icon">◎</div>
+      <h3>Our Mission</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec viverra at massa sit amet ultrices, eros massa faucibus diam, in sodales quam ligula in est.</p>
+    </div>
+    <div class="smv-card reveal">
+      <div class="smv-icon">◉</div>
+      <h3>Our Vision</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec viverra at massa sit amet ultrices, eros massa faucibus diam, in sodales quam ligula in est.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services centered" id="services">
+  <div class="reveal">
+    <p class="section-label">What We Do</p>
+    <h2 class="section-title">Our <em>Services</em></h2>
+    <div class="section-divider"></div>
+    <p class="section-sub">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec viverra at massa sit amet ultrices. Nullam consequat, mauris non interdum cursus.</p>
+  </div>
+  <div class="services-grid reveal">
+    <div class="service-item"><div class="service-icon">🖥</div><span>Web Design</span></div>
+    <div class="service-item"><div class="service-icon">💻</div><span>Web Development</span></div>
+    <div class="service-item"><div class="service-icon">⚙️</div><span>Theme Development</span></div>
+    <div class="service-item"><div class="service-icon">🎮</div><span>Game Development</span></div>
+    <div class="service-item"><div class="service-icon">📱</div><span>Apps Development</span></div>
+    <div class="service-item"><div class="service-icon">🖱</div><span>Desktop Application</span></div>
+    <div class="service-item"><div class="service-icon">🅦</div><span>WordPress Themes</span></div>
+    <div class="service-item"><div class="service-icon">🔧</div><span>WordPress Plugins</span></div>
+    <div class="service-item"><div class="service-icon">📞</div><span>Support &amp; IT</span></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="stats-grid reveal">
+    <div>
+      <div class="stat-icon">📅</div>
+      <div class="stat-num">12<sup>+</sup></div>
+      <div class="stat-label">Years of Experience</div>
+    </div>
+    <div>
+      <div class="stat-icon">✔</div>
+      <div class="stat-num">999<sup>+</sup></div>
+      <div class="stat-label">Completed Projects</div>
+    </div>
+    <div>
+      <div class="stat-icon">👥</div>
+      <div class="stat-num">480<sup>+</sup></div>
+      <div class="stat-label">Total Clients</div>
+    </div>
+    <div>
+      <div class="stat-icon">🏆</div>
+      <div class="stat-num">15<sup>+</sup></div>
+      <div class="stat-label">Award Won</div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio centered" id="portfolio">
+  <div class="reveal">
+    <p class="section-label">Our Work</p>
+    <h2 class="section-title">Our <em>Portfolio</em></h2>
+    <div class="section-divider"></div>
+    <p class="section-sub">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec viverra at massa sit amet ultrices. Nullam consequat, mauris non interdum cursus.</p>
+    <div class="portfolio-tabs">
+      <button class="tab-btn active">All</button>
+      <button class="tab-btn">Web Development</button>
+      <button class="tab-btn">Game Development</button>
+      <button class="tab-btn">App Development</button>
+    </div>
+  </div>
+  <div class="portfolio-grid reveal">
+    <div class="portfolio-item"><div class="portfolio-placeholder">🎮</div></div>
+    <div class="portfolio-item"><div class="portfolio-placeholder">⌨️</div></div>
+    <div class="portfolio-item"><div class="portfolio-placeholder">💼</div></div>
+    <div class="portfolio-item"><div class="portfolio-placeholder">💻</div></div>
+    <div class="portfolio-item"><div class="portfolio-placeholder">📱</div></div>
+    <div class="portfolio-item"><div class="portfolio-placeholder">📲</div></div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial centered" id="contact">
+  <div class="reveal">
+    <p class="section-label">What They Say</p>
+    <h2 class="section-title">Client <em>Testimonial</em></h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="testi-card reveal">
+    <div class="testi-avatar">👤</div>
+    <div class="testi-name">Jayden Vaughan</div>
+    <div class="testi-role">Science Technician</div>
+    <p class="testi-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec viverra at massa sit amet ultrices. Nullam consequat, mauris non interdum cursus.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 <strong>1PAGE</strong>. All rights reserved. Crafted with ♥</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => io.observe(r));
+
+  // Portfolio tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Hero slides (simple dot indicator)
+  let slide = 0;
+  const dots = document.querySelectorAll('.hero-dots span');
+  const titles = ['Game Development','Web Innovation','App Creation'];
+  const subs = [
+    'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    'We build fast, modern web experiences tailored to your brand.',
+    'Native and cross-platform apps that delight users.'
+  ];
+  function goSlide(n) {
+    slide = (n + titles.length) % titles.length;
+    document.querySelector('.hero-title').textContent = titles[slide];
+    document.querySelector('.hero-sub').textContent = subs[slide];
+    dots.forEach((d,i) => d.classList.toggle('active', i === slide));
+  }
+  document.querySelector('.hero-arrow.left').addEventListener('click', () => goSlide(slide - 1));
+  document.querySelector('.hero-arrow.right').addEventListener('click', () => goSlide(slide + 1));
+  setInterval(() => goSlide(slide + 1), 4000);
+</script>
+</body>
+</html>
